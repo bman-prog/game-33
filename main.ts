@@ -1,39 +1,50 @@
 namespace SpriteKind {
     export const Duckles = SpriteKind.create()
 }
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    let mySprite: Sprite = null
+function spawnDuck () {
     duck = sprites.create(img`
         . . . . . . . . . . b 5 b . . . 
         . . . . . . . . . b 5 b . . . . 
         . . . . . . b b b b b b . . . . 
         . . . . . b b 5 5 5 5 5 b . . . 
-        . . . . b b 5 d 1 f 5 d 4 c . . 
-        . . . . b 5 5 1 f f d d 4 4 4 b 
-        . . . . b 5 5 d f b 4 4 4 4 b . 
-        . . . b d 5 5 5 5 4 4 4 4 b . . 
-        . b b d d d 5 5 5 5 5 5 5 b . . 
-        b d d d b b b 5 5 5 5 5 5 5 b . 
-        c d d b 5 5 d c 5 5 5 5 5 5 b . 
-        c b b d 5 d c d 5 5 5 5 5 5 b . 
-        c b 5 5 b c d d 5 5 5 5 5 5 b . 
-        b b c c c d d d 5 5 5 5 5 d b . 
-        . . . . c c d d d 5 5 5 b b . . 
-        . . . . . . c c c c c b b . . . 
+        . . . . b b 5 d 1 f 5 5 d f . . 
+        . . . . b 5 5 1 f f 5 d 4 c . . 
+        . . . . b 5 5 d f b d d 4 4 . . 
+        . b b b d 5 5 5 5 5 4 4 4 4 4 b 
+        b d d d b b d 5 5 4 4 4 4 4 b . 
+        b b d 5 5 5 b 5 5 5 5 5 5 b . . 
+        c d c 5 5 5 5 d 5 5 5 5 5 5 b . 
+        c b d c d 5 5 b 5 5 5 5 5 5 b . 
+        . c d d c c b d 5 5 5 5 5 d b . 
+        . . c b d d d d d 5 5 5 b b . . 
+        . . . c c c c c c c c b b . . . 
+        . . . . . . . . . . . . . . . . 
         `, SpriteKind.Duckles)
-    duck = 1
-    duck.sayText(duck_count)
+    duckcount += 1
+    duckFormer.sayText(duckVel)
     duck.setScale(1, ScaleAnchor.Middle)
-    mySprite.setPosition(randint(0, 10), randint(0, 10))
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Player, function (sprite, otherSprite) {
+    duck.setPosition(randint(1, 160), randint(1, 120))
+    duck.setVelocity(duckVel, duckVel)
+    duck.setBounceOnWall(true)
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Duckles, function (sprite, otherSprite) {
     sprites.destroy(otherSprite)
-    duck_count += 1
-    duckFormer.sayText(duck_count)
+    duckcount += -1
+    duckFormer.sayText(duckVel)
+    if (duckVel >= maxVel) {
+        duckVel += -1
+    } else {
+        duckVel += 2
+    }
 })
-let duck_count = 0
-let duck = 0
+let duck: Sprite = null
 let duckFormer: Sprite = null
+let maxVel = 0
+let duckVel = 0
+let maxDucks = 10000
+duckVel = 50
+maxVel = 100
+let duckcount = 0
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -183,3 +194,7 @@ duckFormer = sprites.create(img`
     ........................
     `, SpriteKind.Player)
 controller.moveSprite(duckFormer)
+duckFormer.setStayInScreen(true)
+game.onUpdateInterval(100, function () {
+    spawnDuck()
+})
